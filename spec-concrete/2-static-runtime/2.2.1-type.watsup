@@ -179,6 +179,8 @@ syntax synthesizedTypeIR =
 ;;;; Types
 ;;
 
+syntax bottomTypeIR = BOTTOM
+
 syntax typeIR =
   | baseTypeIR
   | nameTypeIR
@@ -186,5 +188,6 @@ syntax typeIR =
   | dataTypeIR
   | objectTypeIR
   | synthesizedTypeIR
+  | bottomTypeIR
 
 syntax typeArgumentIR = typeIR

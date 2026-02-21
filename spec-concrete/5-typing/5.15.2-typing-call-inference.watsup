@@ -4,12 +4,15 @@
 
 syntax infer =
   | KNOWN AS typeIR
-  | UNKNOWN
 
 syntax constraint = map<typeId, infer>
 
 dec $empty_constraint(typeId*) : constraint
-def $empty_constraint(typeId*) = `{ (typeId `: UNKNOWN)* }
+
+def $empty_constraint(eps) = `{ eps }
+def $empty_constraint(typeId_h :: typeId*)
+  = $update_map<typeId, infer>(constraint, typeId_h, KNOWN AS BOTTOM)
+  -- if constraint = $empty_constraint(typeId*)
 
 syntax inference = map<typeId, typeIR>
 
@@ -203,17 +206,17 @@ def $merge_constraint'(
     typeId_h :: typeId_t*,
     constraint)
   = $merge_constraint'(constraint_pre, constraint_post, typeId_t*, constraint_updated)
-  -- if UNKNOWN = $find_map<typeId, infer>(constraint_pre, typeId_h)
-  -- if UNKNOWN = $find_map<typeId, infer>(constraint_post, typeId_h)
+  -- if KNOWN AS BOTTOM = $find_map<typeId, infer>(constraint_pre, typeId_h)
+  -- if KNOWN AS BOTTOM = $find_map<typeId, infer>(constraint_post, typeId_h)
   -- if constraint_updated
-      = $update_map<typeId, infer>(constraint, typeId_h, UNKNOWN)
+      = $update_map<typeId, infer>(constraint, typeId_h, KNOWN AS BOTTOM)
 
 def $merge_constraint'(
     constraint_pre, constraint_post,
     typeId_h :: typeId_t*,
     constraint)
   = $merge_constraint'(constraint_pre, constraint_post, typeId_t*, constraint_updated)
-  -- if UNKNOWN = $find_map<typeId, infer>(constraint_pre, typeId_h)
+  -- if KNOWN AS BOTTOM = $find_map<typeId, infer>(constraint_pre, typeId_h)
   -- if KNOWN AS typeIR_post = $find_map<typeId, infer>(constraint_post, typeId_h)
   -- if constraint_updated
       = $update_map<typeId, infer>(constraint, typeId_h, KNOWN AS typeIR_post)
@@ -224,7 +227,7 @@ def $merge_constraint'(
     constraint)
   = $merge_constraint'(constraint_pre, constraint_post, typeId_t*, constraint_updated)
   -- if KNOWN AS typeIR_pre = $find_map<typeId, infer>(constraint_pre, typeId_h)
-  -- if UNKNOWN = $find_map<typeId, infer>(constraint_post, typeId_h)
+  -- if KNOWN AS BOTTOM = $find_map<typeId, infer>(constraint_post, typeId_h)
   -- if constraint_updated
       = $update_map<typeId, infer>(constraint, typeId_h, KNOWN AS typeIR_pre)
 

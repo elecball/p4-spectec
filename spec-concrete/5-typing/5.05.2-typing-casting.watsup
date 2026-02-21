@@ -231,6 +231,9 @@ rulegroup Cast_expl_neq/recordTypeIR-default {
 ;;
 
 rulegroup Cast_impl {
+  
+  rule Cast_impl/bottom:
+    BOTTOM -> typeIR_b
 
   rule Cast_impl/equals:
     typeIR_a -> typeIR_b
@@ -264,6 +267,10 @@ rulegroup Cast_impl_neq/arbitraryInt {
 rule Cast_impl_neq/enumTypeIR-serializable:
   ENUM _ `< typeIR_a > `{ _ } -> typeIR_b
   -- Cast_impl: typeIR_a -> typeIR_b
+
+rule Cast_impl_neq/externObjectTypeIR:
+  (EXTERN typeId `< typeIR_arg_a* > _) -> (EXTERN typeId `< typeIR_arg_b* > _)
+  -- (Cast_impl: typeIR_arg_a -> typeIR_arg_b)*
 
 rule Cast_impl_neq/defaultTypeIR:
   DEFAULT -> typeIR_b

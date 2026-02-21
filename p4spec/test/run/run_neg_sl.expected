@@ -617,7 +617,7 @@ Error on run: ../../../../../p4c/testdata/p4_16_errors/issue764.p4
 Error on run: ../../../../../p4c/testdata/p4_16_errors/issue774-1.p4
 
 >>> Running interpreter test (Program_ok) on ../../../../../p4c/testdata/p4_16_errors/issue774-2.p4
-Error on run: ../../../../../p4c/testdata/p4_16_errors/issue774-2.p4
+Error on run: ../../../../../p4c/testdata/p4_16_errors/issue774-2.p4 (should fail)
 
 >>> Running interpreter test (Program_ok) on ../../../../../p4c/testdata/p4_16_errors/issue803-1.p4
 Error on run: ../../../../../p4c/testdata/p4_16_errors/issue803-1.p4
@@ -931,4 +931,4 @@ Excluding file: ../../../../../p4c/testdata/p4_16_errors/width_e.p4
 >>> Running interpreter test (Program_ok) on ../../../../../p4c/testdata/p4_16_errors/wrong-cast.p4
 Error on run: ../../../../../p4c/testdata/p4_16_errors/wrong-cast.p4
 
-Running interpreter test (Program_ok): [EXCLUDE] 49/310 (15.81%) [PASS] 0/310 (0.00%) [FAIL] 261/310 (84.19%)
+Running interpreter test (Program_ok): [EXCLUDE] 49/310 (15.81%) [PASS] 1/310 (0.32%) [FAIL] 260/310 (83.87%)

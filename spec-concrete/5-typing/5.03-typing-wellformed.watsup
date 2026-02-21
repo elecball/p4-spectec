@@ -65,6 +65,11 @@ relation ConstructorTypeDef_wf:
 rule Type_wf/baseTypeIR:
   B |- baseTypeIR
 
+;;; Bottom type
+
+rule Type_wf/bottomTypeIR:
+  B |- BOTTOM
+
 ;;; Name types
 
 rule Type_wf/nameTypeIR:

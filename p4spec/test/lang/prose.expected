@@ -1575,7 +1575,7 @@ for each ``typeIR'`` in ``typeIR'^{asterisk}^``
   ... Return xref:unions_set[the union of the sets ``bound^{asterisk}^``].
 . Else if let ``+SET+`` ``+<+`` ``typeIR'`` ``+>+`` be ``typeIR``:
  .. Return xref:free_typeIR[free type identifiers in ``typeIR'``].
-. Else:
+. Else if ``typeIR`` has type ``tableMetadataTypeIR``:
  .. Return ``+{+`` ``·`` ``+}+``.
 
 xref:free_typeDefIR[Free type identifiers in ``typeDefIR``]
@@ -1993,8 +1993,7 @@ for each ``typeIR~field~`` in ``typeIR~field~^{asterisk}^``
 . Else if let ``+SET+`` ``+<+`` ``typeIR'`` ``+>+`` be ``typeIR``:
  .. Let ``typeIR~subst~`` be xref:subst_typeIR'[``typeIR'`` substituted by a non-empty ``theta``].
  .. Return ``+SET+`` ``+<+`` ``typeIR~subst~`` ``+>+``.
-. Else:
- .. Let ``tableMetadataTypeIR`` be ``typeIR``.
+. Else if let ``tableMetadataTypeIR`` be ``typeIR``:
  .. Return ``tableMetadataTypeIR``.
 
 xref:subst_parameterIR[``parameterIR`` substituted by ``set<pair<typeId,`` ``typeIR>>``]
@@ -2280,6 +2279,10 @@ xref:Type_alpha[Type_alpha]:
 * ``typeIR`` and ``typeIR'`` are the same type
 
 xref:Type_alpha[``baseTypeIR`` and ``baseTypeIR`` are the same type when]:
+
+. The relation holds.
+
+xref:Type_alpha[``+BOTTOM+`` and ``+BOTTOM+`` are the same type when]:
 
 . The relation holds.
 
@@ -5045,6 +5048,10 @@ xref:Type_wf[``baseTypeIR`` is a well-formed type, with bound type variables ``B
 
 . The relation holds.
 
+xref:Type_wf[``+BOTTOM+`` is a well-formed type, with bound type variables ``B`` when]:
+
+. The relation holds.
+
 xref:Type_wf[``typeId`` is a well-formed type, with bound type variables ``B`` when]:
 
 . Check that ``xref:in_set[$in_set<typeId>(typeId,`` ``B)]``.
@@ -6697,11 +6704,13 @@ for each ``typeIR'''''^?^`` in ``typeIR'''''^?^^{asterisk}^``
 
 xref:Cast_impl[Cast_impl]:
 
-* ``typeIR~a~`` can be implicitly cast to ``typeIR~b~``
+* ``typeIR`` can be implicitly cast to ``typeIR~b~``
 
-xref:Cast_impl[``typeIR~a~`` can be implicitly cast to ``typeIR~b~`` when]:
+xref:Cast_impl[``typeIR`` can be implicitly cast to ``typeIR~b~`` when]:
 
-. Let ``typeIR~a_unroll~`` be xref:unroll_typeIR[``typeIR~a~`` with typedefs unrolled].
+. If ``typeIR`` is equal to ``+BOTTOM+``:
+ .. The relation holds.
+. Let ``typeIR~a_unroll~`` be xref:unroll_typeIR[``typeIR`` with typedefs unrolled].
 . Let ``typeIR~b_unroll~`` be xref:unroll_typeIR[``typeIR~b~`` with typedefs unrolled].
 . If xref:Type_alpha[``typeIR~a_unroll~`` and ``typeIR~b_unroll~`` are the same type]:
  .. The relation holds.
@@ -6724,6 +6733,11 @@ xref:Cast_impl_neq[``+INT+`` can be implicitly cast to ``typeIR'`` (when unequal
 xref:Cast_impl_neq[``+ENUM+`` ``typeId`` ``+<+`` ``typeIR~a~`` ``+>+`` ``+{+`` ``valueFieldIR^{asterisk}^`` ``+}+`` can be implicitly cast to ``typeIR'`` (when unequal) when]:
 
 . Check that xref:Cast_impl[``typeIR~a~`` can be implicitly cast to ``typeIR'``].
+. The relation holds.
+
+xref:Cast_impl_neq[``+EXTERN+`` ``typeId`` ``+<+`` ``typeIR~arg_a~^{asterisk}^`` ``+>+`` ``externMethodTypeDefEnv`` can be implicitly cast to ``+EXTERN+`` ``typeId`` ``+<+`` ``typeIR~arg_b~^{asterisk}^`` ``+>+`` ``++_++`` (when unequal) when]:
+
+. Check that xref:Cast_impl[``typeIR~arg_a~`` can be implicitly cast to ``typeIR~arg_b~``], for all ``typeIR~arg_a~`` in ``typeIR~arg_a~^{asterisk}^`` and ``typeIR~arg_b~`` in ``typeIR~arg_b~^{asterisk}^``.
 . The relation holds.
 
 xref:Cast_impl_neq[``+DEFAULT+`` can be implicitly cast to ``typeIR'`` (when unequal) when]:
@@ -11828,7 +11842,12 @@ xref:Expr_lvalue_ok[``p`` ``TC`` ``+|-+`` ``typedExpressionIR~base~`` ``+.+`` ``
 xref:empty_constraint[$empty_constraint(typeId^{asterisk}^)]
 
 
-. Return ``+{+`` ``(`` ``typeId`` ``+:+`` ``+UNKNOWN+`` ``)^{asterisk}^`` ``+}+``.
+. If ``typeId^{asterisk}^`` is an empty list:
+ .. Return ``+{+`` ``·`` ``+}+``.
+. Else:
+ .. Let ``typeId~h~`` ``{two-colons}`` ``typeId'^{asterisk}^`` be ``typeId^{asterisk}^``.
+ .. Let ``constraint`` be ``xref:empty_constraint[$empty_constraint(typeId'^{asterisk}^)]``.
+ .. Return xref:update_map[the map ``constraint`` with the value for ``typeId~h~`` is updated to ``+KNOWN+`` ``+AS+`` ``+BOTTOM+``].
 
 xref:infer[$infer(typeId^{asterisk}^, parameterIR^{asterisk}^, argumentIR^{asterisk}^)]
 
@@ -12012,27 +12031,21 @@ xref:merge_constraint'[$merge_constraint'(constraint~pre~, constraint~post~, typ
  .. Return ``constraint``.
 . Else:
  .. Let ``typeId~h~`` ``{two-colons}`` ``typeId~t~^{asterisk}^`` be ``typeId^{asterisk}^``.
- .. If ``+UNKNOWN+`` is equal to xref:find_map[``typeId~h~`` in map ``constraint~pre~``]:
-  ... If ``+UNKNOWN+`` is equal to xref:find_map[``typeId~h~`` in map ``constraint~post~``]:
-   .... Let ``constraint~updated~`` be xref:update_map[the map ``constraint`` with the value for ``typeId~h~`` is updated to ``+UNKNOWN+``].
+ .. If ``+KNOWN+`` ``+AS+`` ``+BOTTOM+`` is equal to xref:find_map[``typeId~h~`` in map ``constraint~pre~``]:
+  ... If ``+KNOWN+`` ``+AS+`` ``+BOTTOM+`` is equal to xref:find_map[``typeId~h~`` in map ``constraint~post~``]:
+   .... Let ``constraint~updated~`` be xref:update_map[the map ``constraint`` with the value for ``typeId~h~`` is updated to ``+KNOWN+`` ``+AS+`` ``+BOTTOM+``].
    .... Return ``xref:merge_constraint'[$merge_constraint'(constraint~pre~,`` ``constraint~post~,`` ``typeId~t~^{asterisk}^,`` ``constraint~updated~)]``.
   ... Let ``infer^?^`` be xref:find_map[``typeId~h~`` in map ``constraint~post~``].
-  ... If let ``infer'`` be ``infer^?^``:
-   .... Check that ``infer'`` matches pattern ``KNOWN`` ``AS`` ``%``.
-   .... Let ``+KNOWN+`` ``+AS+`` ``typeIR~post~`` be ``infer'``.
+  ... If let ``+KNOWN+`` ``+AS+`` ``typeIR~post~`` be ``infer^?^``:
    .... Let ``constraint~updated~`` be xref:update_map[the map ``constraint`` with the value for ``typeId~h~`` is updated to ``+KNOWN+`` ``+AS+`` ``typeIR~post~``].
    .... Return ``xref:merge_constraint'[$merge_constraint'(constraint~pre~,`` ``constraint~post~,`` ``typeId~t~^{asterisk}^,`` ``constraint~updated~)]``.
  .. Let ``infer^?^`` be xref:find_map[``typeId~h~`` in map ``constraint~pre~``].
- .. If let ``infer'`` be ``infer^?^``:
-  ... Check that ``infer'`` matches pattern ``KNOWN`` ``AS`` ``%``.
-  ... Let ``+KNOWN+`` ``+AS+`` ``typeIR~pre~`` be ``infer'``.
-  ... If ``+UNKNOWN+`` is equal to xref:find_map[``typeId~h~`` in map ``constraint~post~``]:
+ .. If let ``+KNOWN+`` ``+AS+`` ``typeIR~pre~`` be ``infer^?^``:
+  ... If ``+KNOWN+`` ``+AS+`` ``+BOTTOM+`` is equal to xref:find_map[``typeId~h~`` in map ``constraint~post~``]:
    .... Let ``constraint~updated~`` be xref:update_map[the map ``constraint`` with the value for ``typeId~h~`` is updated to ``+KNOWN+`` ``+AS+`` ``typeIR~pre~``].
    .... Return ``xref:merge_constraint'[$merge_constraint'(constraint~pre~,`` ``constraint~post~,`` ``typeId~t~^{asterisk}^,`` ``constraint~updated~)]``.
-  ... Let ``infer''^?^`` be xref:find_map[``typeId~h~`` in map ``constraint~post~``].
-  ... If let ``infer'''`` be ``infer''^?^``:
-   .... Check that ``infer'''`` matches pattern ``KNOWN`` ``AS`` ``%``.
-   .... Let ``+KNOWN+`` ``+AS+`` ``typeIR~post~`` be ``infer'''``.
+  ... Let ``infer'^?^`` be xref:find_map[``typeId~h~`` in map ``constraint~post~``].
+  ... If let ``+KNOWN+`` ``+AS+`` ``typeIR~post~`` be ``infer'^?^``:
    .... If xref:Cast_impl[``typeIR~pre~`` can be implicitly cast to ``typeIR~post~``]:
     ..... Let ``constraint~updated~`` be xref:update_map[the map ``constraint`` with the value for ``typeId~h~`` is updated to ``+KNOWN+`` ``+AS+`` ``typeIR~post~``].
     ..... Return ``xref:merge_constraint'[$merge_constraint'(constraint~pre~,`` ``constraint~post~,`` ``typeId~t~^{asterisk}^,`` ``constraint~updated~)]``.
@@ -12055,7 +12068,6 @@ xref:merge_constraints[$merge_constraints(constraint~pre~, constraint^{asterisk}
 xref:resolve_constraint[$resolve_constraint(+{+ ( typeId +:+ infer )^{asterisk}^ +}+)]
 
 
-. Check that ``infer`` matches pattern ``KNOWN`` ``AS`` ``%``, for all ``infer`` in ``infer^{asterisk}^``.
 . Let ``typeIR^{asterisk}^`` be the list of ``typeIR``, obtained by repeating:
 +
 --

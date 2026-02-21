@@ -539,13 +539,13 @@ Run success: ../../../../../p4c/testdata/p4_16_samples/functors4.p4
 Run success: ../../../../../p4c/testdata/p4_16_samples/functors5.p4
 
 >>> Running interpreter test (Program_inst) on ../../../../../p4c/testdata/p4_16_samples/functors6.p4
-Excluding file: ../../../../../p4c/testdata/p4_16_samples/functors6.p4
+Error on run: ../../../../../p4c/testdata/p4_16_samples/functors6.p4
 
 >>> Running interpreter test (Program_inst) on ../../../../../p4c/testdata/p4_16_samples/functors7.p4
 Run success: ../../../../../p4c/testdata/p4_16_samples/functors7.p4
 
 >>> Running interpreter test (Program_inst) on ../../../../../p4c/testdata/p4_16_samples/functors8.p4
-Excluding file: ../../../../../p4c/testdata/p4_16_samples/functors8.p4
+Error on run: ../../../../../p4c/testdata/p4_16_samples/functors8.p4
 
 >>> Running interpreter test (Program_inst) on ../../../../../p4c/testdata/p4_16_samples/functors9.p4
 Run success: ../../../../../p4c/testdata/p4_16_samples/functors9.p4
@@ -1103,7 +1103,7 @@ Run success: ../../../../../p4c/testdata/p4_16_samples/issue1291-bmv2.p4
 Run success: ../../../../../p4c/testdata/p4_16_samples/issue1301.p4
 
 >>> Running interpreter test (Program_inst) on ../../../../../p4c/testdata/p4_16_samples/issue1304.p4
-Excluding file: ../../../../../p4c/testdata/p4_16_samples/issue1304.p4
+Error on run: ../../../../../p4c/testdata/p4_16_samples/issue1304.p4
 
 >>> Running interpreter test (Program_inst) on ../../../../../p4c/testdata/p4_16_samples/issue1325-bmv2.p4
 Run success: ../../../../../p4c/testdata/p4_16_samples/issue1325-bmv2.p4
@@ -1613,7 +1613,7 @@ Run success: ../../../../../p4c/testdata/p4_16_samples/issue2488-bmv2.p4
 Run success: ../../../../../p4c/testdata/p4_16_samples/issue249.p4
 
 >>> Running interpreter test (Program_inst) on ../../../../../p4c/testdata/p4_16_samples/issue2492.p4
-Excluding file: ../../../../../p4c/testdata/p4_16_samples/issue2492.p4
+Run success: ../../../../../p4c/testdata/p4_16_samples/issue2492.p4
 
 >>> Running interpreter test (Program_inst) on ../../../../../p4c/testdata/p4_16_samples/issue2495-bmv2.p4
 Run success: ../../../../../p4c/testdata/p4_16_samples/issue2495-bmv2.p4
@@ -1667,7 +1667,7 @@ Run success: ../../../../../p4c/testdata/p4_16_samples/issue2617.p4
 Run success: ../../../../../p4c/testdata/p4_16_samples/issue2627.p4
 
 >>> Running interpreter test (Program_inst) on ../../../../../p4c/testdata/p4_16_samples/issue2630.p4
-Excluding file: ../../../../../p4c/testdata/p4_16_samples/issue2630.p4
+Run success: ../../../../../p4c/testdata/p4_16_samples/issue2630.p4
 
 >>> Running interpreter test (Program_inst) on ../../../../../p4c/testdata/p4_16_samples/issue2635.p4
 Run success: ../../../../../p4c/testdata/p4_16_samples/issue2635.p4
@@ -1730,7 +1730,7 @@ Run success: ../../../../../p4c/testdata/p4_16_samples/issue2800d.p4
 Run success: ../../../../../p4c/testdata/p4_16_samples/issue281.p4
 
 >>> Running interpreter test (Program_inst) on ../../../../../p4c/testdata/p4_16_samples/issue2810.p4
-Excluding file: ../../../../../p4c/testdata/p4_16_samples/issue2810.p4
+Run success: ../../../../../p4c/testdata/p4_16_samples/issue2810.p4
 
 >>> Running interpreter test (Program_inst) on ../../../../../p4c/testdata/p4_16_samples/issue2816-1_ebpf.p4
 Run success: ../../../../../p4c/testdata/p4_16_samples/issue2816-1_ebpf.p4
@@ -1904,7 +1904,7 @@ Run success: ../../../../../p4c/testdata/p4_16_samples/issue3394.p4
 Excluding file: ../../../../../p4c/testdata/p4_16_samples/issue3417.p4
 
 >>> Running interpreter test (Program_inst) on ../../../../../p4c/testdata/p4_16_samples/issue344.p4
-Excluding file: ../../../../../p4c/testdata/p4_16_samples/issue344.p4
+Error on run: ../../../../../p4c/testdata/p4_16_samples/issue344.p4
 
 >>> Running interpreter test (Program_inst) on ../../../../../p4c/testdata/p4_16_samples/issue3483_ubpf.p4
 Run success: ../../../../../p4c/testdata/p4_16_samples/issue3483_ubpf.p4
@@ -3850,4 +3850,4 @@ Run success: ../../../../../testdata/custom/for-loop-exit.p4
 >>> Running interpreter test (Program_inst) on ../../../../../testdata/custom/for-update-exit.p4
 Run success: ../../../../../testdata/custom/for-update-exit.p4
 
-Running interpreter test (Program_inst): [EXCLUDE] 82/1283 (6.39%) [PASS] 1201/1283 (93.61%) [FAIL] 0/1283 (0.00%)
+Running interpreter test (Program_inst): [EXCLUDE] 75/1283 (5.85%) [PASS] 1204/1283 (93.84%) [FAIL] 4/1283 (0.31%)

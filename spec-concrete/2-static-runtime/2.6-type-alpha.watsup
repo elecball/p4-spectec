@@ -35,6 +35,11 @@ relation ExternMethodTypeDef_alpha:
 rule Type_alpha/baseTypeIR:
   baseTypeIR ~~ baseTypeIR
 
+;;; Bottom type
+
+rule Type_alpha/bottomTypeIR:
+  BOTTOM ~~ BOTTOM
+
 ;;; Name types
 
 rule Type_alpha/nameTypeIR:

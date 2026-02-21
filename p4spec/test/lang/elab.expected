@@ -3071,6 +3071,9 @@ syntax synthesizedTypeIR =
    | table_enum typeId { nameIR* } hint(print %0)
    | table_struct typeId {hit boolTypeIR ;miss boolTypeIR ;action_run tableMetadataEnumTypeIR ;} hint(print %0)
 
+syntax bottomTypeIR = 
+   | bottom
+
 syntax typeIR = 
    | void
    | bool
@@ -3106,6 +3109,7 @@ syntax typeIR =
    | set< typeIR >
    | table_enum typeId { nameIR* } hint(print %0)
    | table_struct typeId {hit boolTypeIR ;miss boolTypeIR ;action_run tableMetadataEnumTypeIR ;} hint(print %0)
+   | bottom
 
 syntax typeArgumentIR = typeIR
 
@@ -4454,6 +4458,24 @@ relation Type_alpha: typeIR ~~ typeIR
    paths
 
     rulepath baseTypeIR
+    -- the relation holds
+
+  rulegroup bottomTypeIR
+
+   match
+
+    (signature) bottom as typeIR ~~ bottom as typeIR
+    typeIR ~~ typeIR'
+    -- if typeIR <: bottomTypeIR
+    -- let bottomTypeIR = typeIR as bottomTypeIR
+    -- if (bottomTypeIR = bottom)
+    -- if typeIR' <: bottomTypeIR
+    -- let bottomTypeIR' = typeIR' as bottomTypeIR
+    -- if (bottomTypeIR' = bottom)
+
+   paths
+
+    rulepath bottomTypeIR
     -- the relation holds
 
   rulegroup nameTypeIR
@@ -7317,6 +7339,7 @@ syntax typedefIR =
    | set< typeIR >
    | table_enum typeId { nameIR* } hint(print %0)
    | table_struct typeId {hit boolTypeIR ;miss boolTypeIR ;action_run tableMetadataEnumTypeIR ;} hint(print %0)
+   | bottom
    | annotationList enum nameIR { nameListIR }
    | annotationList enum typeIR nameIR { namedValueListIR }
    | annotationList struct nameIR < typeParameterListIR >{ typeFieldListIR }
@@ -8624,6 +8647,21 @@ relation Type_wf: bound |- typeIR
    paths
 
     rulepath baseTypeIR
+    -- the relation holds
+
+  rulegroup bottomTypeIR
+
+   match
+
+    (signature) B |- bottom as typeIR
+    B |- typeIR
+    -- if typeIR <: bottomTypeIR
+    -- let bottomTypeIR = typeIR as bottomTypeIR
+    -- if (bottomTypeIR = bottom)
+
+   paths
+
+    rulepath bottomTypeIR
     -- the relation holds
 
   rulegroup nameTypeIR
@@ -11667,18 +11705,24 @@ relation Cast_impl: typeIR -> typeIR
 
    match
 
-    (signature) typeIR_a -> typeIR_b
-    typeIR_a -> typeIR_b
+    (signature) typeIR -> typeIR_b
+    typeIR -> typeIR_b
 
    paths
 
+    rulepath bottom
+    -- if (typeIR = bottom as typeIR)
+    -- the relation holds
+
     rulepath equals
+    -- let typeIR_a = typeIR
     -- let typeIR_a_unroll = $unroll_typeIR(typeIR_a)
     -- let typeIR_b_unroll = $unroll_typeIR(typeIR_b)
     -- if Type_alpha: typeIR_a_unroll ~~ typeIR_b_unroll holds
     -- the relation holds
 
     rulepath not-equals
+    -- let typeIR_a = typeIR
     -- let typeIR_a_unroll = $unroll_typeIR(typeIR_a)
     -- let typeIR_b_unroll = $unroll_typeIR(typeIR_b)
     -- if Type_alpha: typeIR_a_unroll ~~ typeIR_b_unroll does not hold
@@ -11724,6 +11768,24 @@ relation Cast_impl_neq: typeIR -> typeIR
 
     rulepath enumTypeIR-serializable
     -- if Cast_impl: typeIR_a -> typeIR_b holds
+    -- the relation holds
+
+  rulegroup externObjectTypeIR
+
+   match
+
+    (signature) extern typeId < typeIR_arg_a*{typeIR_arg_a <- typeIR_arg_a*} > _externMethodTypeDefEnv as typeIR -> extern typeId < typeIR_arg_b*{typeIR_arg_b <- typeIR_arg_b*} > _externMethodTypeDefEnv' as typeIR
+    typeIR -> typeIR'
+    -- if typeIR <: externObjectTypeIR
+    -- let extern typeId < typeIR_arg_a*{typeIR_arg_a <- typeIR_arg_a*} > _externMethodTypeDefEnv = typeIR as externObjectTypeIR
+    -- if typeIR' <: externObjectTypeIR
+    -- let extern typeId' < typeIR_arg_b*{typeIR_arg_b <- typeIR_arg_b*} > _externMethodTypeDefEnv' = typeIR' as externObjectTypeIR
+    -- if (typeId = typeId')
+
+   paths
+
+    rulepath externObjectTypeIR
+    -- (if Cast_impl: typeIR_arg_a -> typeIR_arg_b holds)*{typeIR_arg_a <- typeIR_arg_a*, typeIR_arg_b <- typeIR_arg_b*}
     -- the relation holds
 
   rulegroup defaultTypeIR
@@ -19151,13 +19213,18 @@ relation Expr_lvalue_ok: cursor typingContext |- typedExpressionIR
 
 syntax infer = 
    | knownas typeIR
-   | unknown
 
 syntax constraint = map<typeId, infer>
 
 def $empty_constraint(typeId*) : constraint =
 
-  clause 0 : (typeId*{typeId <- typeId*}) = { typeId : unknown*{typeId <- typeId*} }
+  clause 0 : (typeId*{typeId <- typeId*}) = { [] }
+  -- if typeId*{typeId <- typeId*} matches []
+
+  clause 1 : (typeId'*{typeId' <- typeId'*}) = $update_map<typeId, infer>(constraint, typeId_h, knownas bottom as typeIR)
+  -- if typeId'*{typeId' <- typeId'*} matches _ :: _
+  -- let typeId_h :: typeId*{typeId <- typeId*} = typeId'*{typeId' <- typeId'*}
+  -- let constraint = $empty_constraint(typeId*{typeId <- typeId*})
 
 syntax inference = map<typeId, typeIR>
 
@@ -19329,61 +19396,49 @@ def $merge_constraint'(constraint, constraint, typeId*, constraint) : constraint
   clause 1 : (constraint_pre, constraint_post, typeId*{typeId <- typeId*}, constraint) = $merge_constraint'(constraint_pre, constraint_post, typeId_t*{typeId_t <- typeId_t*}, constraint_updated)
   -- if typeId*{typeId <- typeId*} matches _ :: _
   -- let typeId_h :: typeId_t*{typeId_t <- typeId_t*} = typeId*{typeId <- typeId*}
-  -- if (?(unknown) = $find_map<typeId, infer>(constraint_pre, typeId_h))
-  -- if (?(unknown) = $find_map<typeId, infer>(constraint_post, typeId_h))
-  -- let constraint_updated = $update_map<typeId, infer>(constraint, typeId_h, unknown)
+  -- if (?(knownas bottom as typeIR) = $find_map<typeId, infer>(constraint_pre, typeId_h))
+  -- if (?(knownas bottom as typeIR) = $find_map<typeId, infer>(constraint_post, typeId_h))
+  -- let constraint_updated = $update_map<typeId, infer>(constraint, typeId_h, knownas bottom as typeIR)
 
   clause 2 : (constraint_pre, constraint_post, typeId*{typeId <- typeId*}, constraint) = $merge_constraint'(constraint_pre, constraint_post, typeId_t*{typeId_t <- typeId_t*}, constraint_updated)
   -- if typeId*{typeId <- typeId*} matches _ :: _
   -- let typeId_h :: typeId_t*{typeId_t <- typeId_t*} = typeId*{typeId <- typeId*}
-  -- if (?(unknown) = $find_map<typeId, infer>(constraint_pre, typeId_h))
-  -- let infer'?{infer' <- infer'?} = $find_map<typeId, infer>(constraint_post, typeId_h)
-  -- if infer'?{infer' <- infer'?} matches (_)
-  -- let ?(infer) = infer'?{infer' <- infer'?}
-  -- if infer matches `KNOWNAS%`
-  -- let knownas typeIR_post = infer
+  -- if (?(knownas bottom as typeIR) = $find_map<typeId, infer>(constraint_pre, typeId_h))
+  -- let infer?{infer <- infer?} = $find_map<typeId, infer>(constraint_post, typeId_h)
+  -- if infer?{infer <- infer?} matches (_)
+  -- let ?(knownas typeIR_post) = infer?{infer <- infer?}
   -- let constraint_updated = $update_map<typeId, infer>(constraint, typeId_h, knownas typeIR_post)
 
   clause 3 : (constraint_pre, constraint_post, typeId*{typeId <- typeId*}, constraint) = $merge_constraint'(constraint_pre, constraint_post, typeId_t*{typeId_t <- typeId_t*}, constraint_updated)
   -- if typeId*{typeId <- typeId*} matches _ :: _
   -- let typeId_h :: typeId_t*{typeId_t <- typeId_t*} = typeId*{typeId <- typeId*}
-  -- let infer'?{infer' <- infer'?} = $find_map<typeId, infer>(constraint_pre, typeId_h)
-  -- if infer'?{infer' <- infer'?} matches (_)
-  -- let ?(infer) = infer'?{infer' <- infer'?}
-  -- if infer matches `KNOWNAS%`
-  -- let knownas typeIR_pre = infer
-  -- if (?(unknown) = $find_map<typeId, infer>(constraint_post, typeId_h))
+  -- let infer?{infer <- infer?} = $find_map<typeId, infer>(constraint_pre, typeId_h)
+  -- if infer?{infer <- infer?} matches (_)
+  -- let ?(knownas typeIR_pre) = infer?{infer <- infer?}
+  -- if (?(knownas bottom as typeIR) = $find_map<typeId, infer>(constraint_post, typeId_h))
   -- let constraint_updated = $update_map<typeId, infer>(constraint, typeId_h, knownas typeIR_pre)
 
   clause 4 : (constraint_pre, constraint_post, typeId*{typeId <- typeId*}, constraint) = $merge_constraint'(constraint_pre, constraint_post, typeId_t*{typeId_t <- typeId_t*}, constraint_updated)
   -- if typeId*{typeId <- typeId*} matches _ :: _
   -- let typeId_h :: typeId_t*{typeId_t <- typeId_t*} = typeId*{typeId <- typeId*}
-  -- let infer'?{infer' <- infer'?} = $find_map<typeId, infer>(constraint_pre, typeId_h)
+  -- let infer?{infer <- infer?} = $find_map<typeId, infer>(constraint_pre, typeId_h)
+  -- if infer?{infer <- infer?} matches (_)
+  -- let ?(knownas typeIR_pre) = infer?{infer <- infer?}
+  -- let infer'?{infer' <- infer'?} = $find_map<typeId, infer>(constraint_post, typeId_h)
   -- if infer'?{infer' <- infer'?} matches (_)
-  -- let ?(infer) = infer'?{infer' <- infer'?}
-  -- if infer matches `KNOWNAS%`
-  -- let knownas typeIR_pre = infer
-  -- let infer'''?{infer''' <- infer'''?} = $find_map<typeId, infer>(constraint_post, typeId_h)
-  -- if infer'''?{infer''' <- infer'''?} matches (_)
-  -- let ?(infer'') = infer'''?{infer''' <- infer'''?}
-  -- if infer'' matches `KNOWNAS%`
-  -- let knownas typeIR_post = infer''
+  -- let ?(knownas typeIR_post) = infer'?{infer' <- infer'?}
   -- if Cast_impl: typeIR_pre -> typeIR_post holds
   -- let constraint_updated = $update_map<typeId, infer>(constraint, typeId_h, knownas typeIR_post)
 
   clause 5 : (constraint_pre, constraint_post, typeId*{typeId <- typeId*}, constraint) = $merge_constraint'(constraint_pre, constraint_post, typeId_t*{typeId_t <- typeId_t*}, constraint_updated)
   -- if typeId*{typeId <- typeId*} matches _ :: _
   -- let typeId_h :: typeId_t*{typeId_t <- typeId_t*} = typeId*{typeId <- typeId*}
-  -- let infer'?{infer' <- infer'?} = $find_map<typeId, infer>(constraint_pre, typeId_h)
+  -- let infer?{infer <- infer?} = $find_map<typeId, infer>(constraint_pre, typeId_h)
+  -- if infer?{infer <- infer?} matches (_)
+  -- let ?(knownas typeIR_pre) = infer?{infer <- infer?}
+  -- let infer'?{infer' <- infer'?} = $find_map<typeId, infer>(constraint_post, typeId_h)
   -- if infer'?{infer' <- infer'?} matches (_)
-  -- let ?(infer) = infer'?{infer' <- infer'?}
-  -- if infer matches `KNOWNAS%`
-  -- let knownas typeIR_pre = infer
-  -- let infer'''?{infer''' <- infer'''?} = $find_map<typeId, infer>(constraint_post, typeId_h)
-  -- if infer'''?{infer''' <- infer'''?} matches (_)
-  -- let ?(infer'') = infer'''?{infer''' <- infer'''?}
-  -- if infer'' matches `KNOWNAS%`
-  -- let knownas typeIR_post = infer''
+  -- let ?(knownas typeIR_post) = infer'?{infer' <- infer'?}
   -- if Cast_impl: typeIR_pre -> typeIR_post does not hold
   -- if Cast_impl: typeIR_post -> typeIR_pre holds
   -- let constraint_updated = $update_map<typeId, infer>(constraint, typeId_h, knownas typeIR_pre)
@@ -19402,9 +19457,7 @@ def $merge_constraints(constraint, constraint*) : constraint =
 def $resolve_constraint(constraint) : inference =
 
   clause 0 : ({ typeId : infer*{infer <- infer*, typeId <- typeId*} }) = { typeId : typeIR*{typeIR <- typeIR*, typeId <- typeId*} }
-  -- (let infer' = infer)*{infer <- infer*, infer' -> infer'*}
-  -- (if infer' matches `KNOWNAS%`)*{infer' <- infer'*}
-  -- (let knownas typeIR = infer')*{infer' <- infer'*, typeIR -> typeIR*}
+  -- (let knownas typeIR = infer)*{infer <- infer*, typeIR -> typeIR*}
 
 def $resolve_type_alias(typeIR) : (nameIR, typeIR*) =
 
