@@ -7938,7 +7938,9 @@ xref:Stmt_ok[Typing ``namedType`` ``+.+`` ``+APPLY+`` ``+(+`` ``argumentList`` `
 . Check that ``callExpressionIR`` matches pattern ``%`` ``(`` ``%`` ``)``.
 . Let ``constructorTargetIR`` ``+(+`` ``argumentIR^{asterisk}^`` ``+)+`` be ``callExpressionIR``.
 . Check that ``argumentIR^{asterisk}^`` is an empty list.
-. Let ``prefixedNameIR`` ``+<+`` ``typeArgumentIR^{asterisk}^`` ``+>+`` be ``constructorTargetIR``.
+. Let ``constructorTargetIR'`` be ``constructorTargetIR``.
+. Check that ``constructorTargetIR'`` matches pattern ``%`` ``<`` ``%`` ``>``.
+. Let ``prefixedNameIR`` ``+<+`` ``typeArgumentIR^{asterisk}^`` ``+>+`` be ``constructorTargetIR'``.
 . Let ``typeIR~object_unroll~`` be xref:unroll_typeIR[``typeIR~object~`` with typedefs unrolled].
 . Check that ``typeIR~object_unroll~`` has type ``parserObjectTypeIR`` or ``typeIR~object_unroll~`` has type ``controlObjectTypeIR``.
 . Let ``nameIR~object~`` be ``"__direct_application"``.
@@ -10367,9 +10369,10 @@ xref:ConstructorType_ok[ConstructorType_ok]:
 
 xref:ConstructorType_ok[Finding the type of constructor call ``prefixedNameIR`` ``+<+`` ``typeArgumentIR^{asterisk}^`` ``+>+`` ``+(+`` ``argumentIR^{asterisk}^`` ``+)+``, under cursor ``p`` and context ``TC``]:
 
+. Let ``typeArgumentIR'^{asterisk}^`` be ``typeArgumentIR^{asterisk}^``.
 . If ``·`` is equal to xref:find_typeDef_t[the type definition of ``prefixedNameIR`` from the ``p`` layer of ``TC``]:
  .. Let ``callableId`` ``+:+`` ``constructorTypeDefIR`` ``+#+`` ``id~default~^{asterisk}^`` ``+#+`` ``id~optional~^{asterisk}^`` be xref:option_get[*!*] xref:find_constructorDef_overloaded_t[the overloaded constructor definition of ``prefixedNameIR`` ``+(+`` ``argumentIR^{asterisk}^`` ``+)+`` in ``TC``].
- .. Let ``(`` ``constructorTypeIR,`` ``typeId~impl~^{asterisk}^`` ``)`` be xref:specialize_constructorTypeDefIR[``constructorTypeDefIR`` specialized by ``typeArgumentIR^{asterisk}^``].
+ .. Let ``(`` ``constructorTypeIR,`` ``typeId~impl~^{asterisk}^`` ``)`` be xref:specialize_constructorTypeDefIR[``constructorTypeDefIR`` specialized by ``typeArgumentIR'^{asterisk}^``].
  .. Let ``bound`` be xref:bound[bound type variables from the ``p`` layer of ``TC``].
  .. Let ``B`` be xref:union_set[the union of the sets ``bound`` and ``+{+`` ``typeId~impl~^{asterisk}^`` ``+}+``].
  .. Check that xref:ConstructorType_wf[``constructorTypeIR`` is a well-formed constructor type, with bound type variables ``B``].
@@ -10378,7 +10381,7 @@ xref:ConstructorType_ok[Finding the type of constructor call ``prefixedNameIR`` 
 . If let ``typeDefIR'`` be ``typeDefIR^?^``:
  .. Check that ``typeDefIR'`` does not have type ``typedefTypeIR``.
  .. Let ``callableId`` ``+:+`` ``constructorTypeDefIR`` ``+#+`` ``id~default~^{asterisk}^`` ``+#+`` ``id~optional~^{asterisk}^`` be xref:option_get[*!*] xref:find_constructorDef_overloaded_t[the overloaded constructor definition of ``prefixedNameIR`` ``+(+`` ``argumentIR^{asterisk}^`` ``+)+`` in ``TC``].
- .. Let ``(`` ``constructorTypeIR,`` ``typeId~impl~^{asterisk}^`` ``)`` be xref:specialize_constructorTypeDefIR[``constructorTypeDefIR`` specialized by ``typeArgumentIR^{asterisk}^``].
+ .. Let ``(`` ``constructorTypeIR,`` ``typeId~impl~^{asterisk}^`` ``)`` be xref:specialize_constructorTypeDefIR[``constructorTypeDefIR`` specialized by ``typeArgumentIR'^{asterisk}^``].
  .. Let ``bound`` be xref:bound[bound type variables from the ``p`` layer of ``TC``].
  .. Let ``B`` be xref:union_set[the union of the sets ``bound`` and ``+{+`` ``typeId~impl~^{asterisk}^`` ``+}+``].
  .. Check that xref:ConstructorType_wf[``constructorTypeIR`` is a well-formed constructor type, with bound type variables ``B``].
@@ -13157,6 +13160,7 @@ xref:DirectApplicationStmt_inst[DirectApplicationStmt_inst]:
 
 xref:DirectApplicationStmt_inst[Compile-time evaluation of ``constructorTargetIR`` ``+.+`` ``+APPLY+`` ``+(+`` ``argumentListIR`` ``+)+`` ``+;+``, under cursor ``p``, context ``IC``, and store ``STO~0~``]:
 
+. Check that ``constructorTargetIR`` matches pattern ``%`` ``<`` ``%`` ``>``.
 . Let ``prefixedNameIR`` ``+<+`` ``typeArgumentListIR`` ``+>+`` be ``constructorTargetIR``.
 . Let the constructor ``constructorDef`` ``+<+`` ``typeArgumentListIR~inst~`` ``+>+`` with defaults ``id~default~^{asterisk}^`` and optionals ``id~optional~^{asterisk}^`` be
 * the result of xref:Constructor_inst[finding constructor for ``prefixedNameIR`` ``+<+`` ``typeArgumentListIR`` ``+>+`` ``+(+`` ``·`` ``+)+`` under cursor ``p``, and context ``IC``].
@@ -13678,6 +13682,7 @@ xref:InstDecl_inst[InstDecl_inst]:
 
 xref:InstDecl_inst[Loading ``annotationList`` ``typeIR`` ``constructorTargetIR`` ``+(+`` ``argumentListIR`` ``+)+`` ``nameIR`` ``objectInitializerOptIR`` ``+;+``, under cursor ``p``, context ``IC~0~``, and store ``STO~0~``]:
 
+. Check that ``constructorTargetIR`` matches pattern ``%`` ``<`` ``%`` ``>``.
 . Let ``prefixedNameIR`` ``+<+`` ``typeArgumentListIR`` ``+>+`` be ``constructorTargetIR``.
 . Let the constructor ``constructorDef`` ``+<+`` ``typeArgumentListIR~inst~`` ``+>+`` with defaults ``id~default~^{asterisk}^`` and optionals ``id~optional~^{asterisk}^`` be
 * the result of xref:Constructor_inst[finding constructor for ``prefixedNameIR`` ``+<+`` ``typeArgumentListIR`` ``+>+`` ``+(+`` ``argumentListIR`` ``+)+`` under cursor ``p``, and context ``IC~0~``].

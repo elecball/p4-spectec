@@ -6953,6 +6953,8 @@ syntax callableTargetIR =
    | ( callableTargetIR )
 
 syntax constructorTargetIR = 
+   | ` nameIR hint(print %0)
+   | . nameIR
    | prefixedNameIR < typeArgumentListIR >
 
 syntax callExpressionIR = 
@@ -13522,7 +13524,9 @@ relation Stmt_ok: cursor typingContext flow loopctxt |- statement : typingContex
     -- if callExpressionIR matches `%(%)`
     -- let constructorTargetIR ( argumentIR*{argumentIR <- argumentIR*} ) = callExpressionIR
     -- if argumentIR*{argumentIR <- argumentIR*} matches []
-    -- let prefixedNameIR < typeArgumentIR*{typeArgumentIR <- typeArgumentIR*} > = constructorTargetIR
+    -- let constructorTargetIR' = constructorTargetIR
+    -- if constructorTargetIR' matches `%<%>`
+    -- let prefixedNameIR < typeArgumentIR*{typeArgumentIR <- typeArgumentIR*} > = constructorTargetIR'
     -- let typeIR_object_unroll = $unroll_typeIR(typeIR_object)
     -- if (typeIR_object_unroll <: parserObjectTypeIR \/ typeIR_object_unroll <: controlObjectTypeIR)
     -- let nameIR_object = "__direct_application"
@@ -16802,7 +16806,9 @@ relation ConstructorType_ok: cursor typingContext |- constructorTargetIR ( argum
    match
 
     (signature) p TC |- prefixedNameIR < typeArgumentIR'*{typeArgumentIR' <- typeArgumentIR'*} > ( argumentIR*{argumentIR <- argumentIR*} ): % <# % >(# % # % )
-    p TC |- prefixedNameIR < typeArgumentIR'*{typeArgumentIR' <- typeArgumentIR'*} > ( argumentIR*{argumentIR <- argumentIR*} ): % <# % >(# % # % )
+    p TC |- constructorTargetIR ( argumentIR*{argumentIR <- argumentIR*} ): % <# % >(# % # % )
+    -- if constructorTargetIR matches `%<%>`
+    -- let prefixedNameIR < typeArgumentIR'*{typeArgumentIR' <- typeArgumentIR'*} > = constructorTargetIR
 
    paths
 
@@ -20904,7 +20910,9 @@ relation Expr_inst: cursor instContext store |- typedExpressionIR : store value
     -- if expressionIR <: callExpressionIR
     -- let callExpressionIR = expressionIR as callExpressionIR
     -- if callExpressionIR matches `%(%)`
-    -- let prefixedNameIR < typeArgumentListIR > ( argumentListIR ) = callExpressionIR
+    -- let constructorTargetIR ( argumentListIR ) = callExpressionIR
+    -- if constructorTargetIR matches `%<%>`
+    -- let prefixedNameIR < typeArgumentListIR > = constructorTargetIR
 
    paths
 
@@ -21064,7 +21072,9 @@ relation DirectApplicationStmt_inst: cursor instContext store |- directApplicati
    paths
 
     rulepath 
-    -- let prefixedNameIR < typeArgumentListIR > = constructorTargetIR
+    -- let constructorTargetIR' = constructorTargetIR
+    -- if constructorTargetIR' matches `%<%>`
+    -- let prefixedNameIR < typeArgumentListIR > = constructorTargetIR'
     -- Constructor_inst: p IC |- prefixedNameIR < typeArgumentListIR >( [] ): constructorDef < typeArgumentListIR_inst >(# id_default*{id_default <- id_default*} # id_optional*{id_optional <- id_optional*} )
     -- let typeId = $flatten_prefixedNameIR(prefixedNameIR)
     -- let IC_callee = $enter_path_i(IC, typeId)
@@ -22021,7 +22031,9 @@ relation InstDecl_inst: cursor instContext store |- instantiationIR : instContex
    paths
 
     rulepath extern
-    -- let prefixedNameIR < typeArgumentListIR > = constructorTargetIR
+    -- let constructorTargetIR' = constructorTargetIR
+    -- if constructorTargetIR' matches `%<%>`
+    -- let prefixedNameIR < typeArgumentListIR > = constructorTargetIR'
     -- Constructor_inst: p IC_0 |- prefixedNameIR < typeArgumentListIR >( argumentListIR ): constructorDef < typeArgumentListIR_inst >(# id_default*{id_default <- id_default*} # id_optional*{id_optional <- id_optional*} )
     -- let IC_inner = $enter_path_i(IC_0, nameIR)
     -- Constructor_call: p IC_inner STO_0 |- constructorDef < typeArgumentListIR_inst >( argumentListIR # id_default*{id_default <- id_default*} # id_optional*{id_optional <- id_optional*} ): STO_1 object
@@ -22041,7 +22053,9 @@ relation InstDecl_inst: cursor instContext store |- instantiationIR : instContex
     -- output: % % % |- % : IC_1 STO_3 constantDeclarationIR
 
     rulepath non-extern
-    -- let prefixedNameIR < typeArgumentListIR > = constructorTargetIR
+    -- let constructorTargetIR' = constructorTargetIR
+    -- if constructorTargetIR' matches `%<%>`
+    -- let prefixedNameIR < typeArgumentListIR > = constructorTargetIR'
     -- Constructor_inst: p IC_0 |- prefixedNameIR < typeArgumentListIR >( argumentListIR ): constructorDef < typeArgumentListIR_inst >(# id_default*{id_default <- id_default*} # id_optional*{id_optional <- id_optional*} )
     -- let IC_inner = $enter_path_i(IC_0, nameIR)
     -- Constructor_call: p IC_inner STO_0 |- constructorDef < typeArgumentListIR_inst >( argumentListIR # id_default*{id_default <- id_default*} # id_optional*{id_optional <- id_optional*} ): STO_1 object

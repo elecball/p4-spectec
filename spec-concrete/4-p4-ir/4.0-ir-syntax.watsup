@@ -156,7 +156,9 @@ syntax callableTargetIR =
   | TYPE prefixedNameIR `. nameIR
   | `( callableTargetIR )
 
-syntax constructorTargetIR = prefixedNameIR `< typeArgumentListIR >
+syntax constructorTargetIR =
+  | prefixedNameIR
+  | prefixedNameIR `< typeArgumentListIR >
 
 syntax callExpressionIR =
   | constructorTargetIR `( argumentListIR )
