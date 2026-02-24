@@ -6740,6 +6740,11 @@ xref:Cast_impl_neq[``+EXTERN+`` ``typeId`` ``+<+`` ``typeIR~arg_a~^{asterisk}^``
 . Check that xref:Cast_impl[``typeIR~arg_a~`` can be implicitly cast to ``typeIR~arg_b~``], for all ``typeIR~arg_a~`` in ``typeIR~arg_a~^{asterisk}^`` and ``typeIR~arg_b~`` in ``typeIR~arg_b~^{asterisk}^``.
 . The relation holds.
 
+xref:Cast_impl_neq[``+EXTERN+`` ``typeId`` ``+<+`` ``typeIR~arg_a~^{asterisk}^`` ``+>+`` ``externMethodTypeDefEnv`` can be implicitly cast to ``+EXTERN+`` ``typeId`` ``+<+`` ``typeIR~arg_b~^{asterisk}^`` ``+>+`` ``++_++`` (when unequal) when]:
+
+. Check that xref:Cast_impl[``typeIR~arg_a~`` can be implicitly cast to ``typeIR~arg_b~``], for all ``typeIR~arg_a~`` in ``typeIR~arg_a~^{asterisk}^`` and ``typeIR~arg_b~`` in ``typeIR~arg_b~^{asterisk}^``.
+. The relation holds.
+
 xref:Cast_impl_neq[``+DEFAULT+`` can be implicitly cast to ``typeIR'`` (when unequal) when]:
 
 . Check that xref:is_defaultable_typeIR[``typeIR'`` can be default-initialized].
@@ -12979,6 +12984,71 @@ xref:Expr_inst[Compile-time evaluation of ``typedExpressionIR~cond~`` ``+?+`` ``
 
 xref:Expr_inst[Compile-time evaluation of ``+(+`` ``typeIR`` ``+)+`` ``typedExpressionIR`` annotated with ``expressionNoteIR``, under cursor ``p``, context ``IC``, and store ``STO``]:
 
+. Let the updated store ``STO~1~`` and ``value~ref~`` be
+* the result of xref:Expr_inst[compile-time evaluation of ``typedExpressionIR``, under cursor ``p``, context ``IC``, and store ``STO``].
+. Let ``value`` be ``value~ref~``.
+. Check that ``value`` has type ``objectReferenceValue``.
+. Let ``+REF+`` ``objectId`` be ``value``.
+. Check that ``typeIR`` has type ``externObjectTypeIR``.
+. Let ``object`` be xref:find_store[the object ``objectId`` in ``STO~1~``].
+. Check that ``object`` has type ``externObject``.
+. Let ``+EXTERN+`` ``++_++`` ``+<+`` ``++_++`` ``+>+`` ``+{+`` ``++_++`` ``++_++`` ``++_++`` ``+}+`` be ``object``.
+. Result in the updated store ``STO~1~`` and ``value~ref~``.
+
+xref:Expr_inst[Compile-time evaluation of ``+(+`` ``typeIR`` ``+)+`` ``typedExpressionIR`` annotated with ``expressionNoteIR``, under cursor ``p``, context ``IC``, and store ``STO``]:
+
+. Let the updated store ``STO~1~`` and ``value~ref~`` be
+* the result of xref:Expr_inst[compile-time evaluation of ``typedExpressionIR``, under cursor ``p``, context ``IC``, and store ``STO``].
+. Let ``value`` be ``value~ref~``.
+. Check that ``value`` has type ``objectReferenceValue``.
+. Let ``+REF+`` ``objectId`` be ``value``.
+. Check that ``typeIR`` has type ``parserObjectTypeIR``.
+. Let ``object`` be xref:find_store[the object ``objectId`` in ``STO~1~``].
+. Check that ``object`` has type ``parserObject``.
+. Let ``+PARSER+`` ``+<+`` ``++_++`` ``+>+`` ``+(+`` ``++_++`` ``+)+`` ``+{+`` ``++_++`` ``++_++`` ``++_++`` ``+}+`` be ``object``.
+. Result in the updated store ``STO~1~`` and ``value~ref~``.
+
+xref:Expr_inst[Compile-time evaluation of ``+(+`` ``typeIR`` ``+)+`` ``typedExpressionIR`` annotated with ``expressionNoteIR``, under cursor ``p``, context ``IC``, and store ``STO``]:
+
+. Let the updated store ``STO~1~`` and ``value~ref~`` be
+* the result of xref:Expr_inst[compile-time evaluation of ``typedExpressionIR``, under cursor ``p``, context ``IC``, and store ``STO``].
+. Let ``value`` be ``value~ref~``.
+. Check that ``value`` has type ``objectReferenceValue``.
+. Let ``+REF+`` ``objectId`` be ``value``.
+. Check that ``typeIR`` has type ``controlObjectTypeIR``.
+. Let ``object`` be xref:find_store[the object ``objectId`` in ``STO~1~``].
+. Check that ``object`` has type ``controlObject``.
+. Let ``+CONTROL+`` ``+<+`` ``++_++`` ``+>+`` ``+(+`` ``++_++`` ``+)+`` ``+{+`` ``++_++`` ``++_++`` ``++_++`` ``++_++`` ``+}+`` be ``object``.
+. Result in the updated store ``STO~1~`` and ``value~ref~``.
+
+xref:Expr_inst[Compile-time evaluation of ``+(+`` ``typeIR`` ``+)+`` ``typedExpressionIR`` annotated with ``expressionNoteIR``, under cursor ``p``, context ``IC``, and store ``STO``]:
+
+. Let the updated store ``STO~1~`` and ``value~ref~`` be
+* the result of xref:Expr_inst[compile-time evaluation of ``typedExpressionIR``, under cursor ``p``, context ``IC``, and store ``STO``].
+. Let ``value`` be ``value~ref~``.
+. Check that ``value`` has type ``objectReferenceValue``.
+. Let ``+REF+`` ``objectId`` be ``value``.
+. Check that ``typeIR`` has type ``packageObjectTypeIR``.
+. Let ``object`` be xref:find_store[the object ``objectId`` in ``STO~1~``].
+. Check that ``object`` has type ``packageObject``.
+. Let ``+PACKAGE+`` ``+<+`` ``++_++`` ``+>+`` ``+{+`` ``++_++`` ``+}+`` be ``object``.
+. Result in the updated store ``STO~1~`` and ``value~ref~``.
+
+xref:Expr_inst[Compile-time evaluation of ``+(+`` ``typeIR`` ``+)+`` ``typedExpressionIR`` annotated with ``expressionNoteIR``, under cursor ``p``, context ``IC``, and store ``STO``]:
+
+. Let the updated store ``STO~1~`` and ``value~ref~`` be
+* the result of xref:Expr_inst[compile-time evaluation of ``typedExpressionIR``, under cursor ``p``, context ``IC``, and store ``STO``].
+. Let ``value`` be ``value~ref~``.
+. Check that ``value`` has type ``objectReferenceValue``.
+. Let ``+REF+`` ``objectId`` be ``value``.
+. Check that ``typeIR`` has type ``tableObjectTypeIR``.
+. Let ``object`` be xref:find_store[the object ``objectId`` in ``STO~1~``].
+. Check that ``object`` has type ``tableObject``.
+. Let ``+TABLE+`` ``++_++`` ``+{+`` ``++_++`` ``++_++`` ``+}+`` be ``object``.
+. Result in the updated store ``STO~1~`` and ``value~ref~``.
+
+xref:Expr_inst[Compile-time evaluation of ``+(+`` ``typeIR`` ``+)+`` ``typedExpressionIR`` annotated with ``expressionNoteIR``, under cursor ``p``, context ``IC``, and store ``STO``]:
+
 . Let the updated store ``STO~1~`` and ``value`` be
 * the result of xref:Expr_inst[compile-time evaluation of ``typedExpressionIR``, under cursor ``p``, context ``IC``, and store ``STO``].
 . Let ``value~cast~`` be xref:cast_op[``value`` casted to type ``typeIR``].
@@ -13081,6 +13151,12 @@ xref:Expr_inst[Compile-time evaluation of ``typedExpressionIR~base~`` ``+.+`` ``
 . Let the updated store ``STO~3~`` and ``value~lo~`` be
 * the result of xref:Expr_inst[compile-time evaluation of ``typedExpressionIR~lo~``, under cursor ``p``, context ``IC``, and store ``STO~2~``].
 . Result in the updated store ``STO~3~`` and <<bitacc_op,``value~base~`` ``+[+`` ``value~hi~`` ``+:+`` ``value~lo~`` ``+]+``>>.
+
+xref:Expr_inst[Compile-time evaluation of ``prefixedNameIR`` ``+(+`` ``argumentListIR`` ``+)+`` annotated with ``expressionNoteIR``, under cursor ``p``, context ``IC``, and store ``STO``]:
+
+. Let the updated store ``STO~2~`` and ``value~ref~`` be
+* the result of xref:Expr_inst[compile-time evaluation of ``prefixedNameIR`` ``+<+`` ``·`` ``+>+`` ``+(+`` ``argumentListIR`` ``+)+`` annotated with ``expressionNoteIR``, under cursor ``p``, context ``IC``, and store ``STO``].
+. Result in the updated store ``STO~2~`` and ``value~ref~``.
 
 xref:Expr_inst[Compile-time evaluation of ``prefixedNameIR`` ``+<+`` ``typeArgumentListIR`` ``+>+`` ``+(+`` ``argumentListIR`` ``+)+`` annotated with ``expressionNoteIR``, under cursor ``p``, context ``IC``, and store ``STO``]:
 

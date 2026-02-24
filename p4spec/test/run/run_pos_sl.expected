@@ -3851,6 +3851,6 @@ Run success: ../../../../../testdata/custom/for-loop-exit.p4
 Run success: ../../../../../testdata/custom/for-update-exit.p4
 
 >>> Running interpreter test (Program_inst) on ../../../../../testdata/custom/issue-108.p4
-Error on run: ../../../../../testdata/custom/issue-108.p4
+Run success: ../../../../../testdata/custom/issue-108.p4
 
-Running interpreter test (Program_inst): [EXCLUDE] 79/1284 (6.15%) [PASS] 1204/1284 (93.77%) [FAIL] 1/1284 (0.08%)
+Running interpreter test (Program_inst): [EXCLUDE] 79/1284 (6.15%) [PASS] 1205/1284 (93.85%) [FAIL] 0/1284 (0.00%)

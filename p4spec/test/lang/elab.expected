@@ -12032,6 +12032,24 @@ relation Cast_impl_neq: typeIR -> typeIR
     -- (if $is_defaultable_typeIR(typeIR_field_b_default))*{typeIR_field_b_default <- typeIR_field_b_default*}
     -- the relation holds
 
+  rulegroup others
+
+   match
+
+    (signature) extern typeId < typeIR_arg_a*{typeIR_arg_a <- typeIR_arg_a*} > _externMethodTypeDefEnv as typeIR -> extern typeId < typeIR_arg_b*{typeIR_arg_b <- typeIR_arg_b*} > _externMethodTypeDefEnv' as typeIR
+    typeIR -> typeIR'
+    -- if typeIR <: externObjectTypeIR
+    -- let extern typeId < typeIR_arg_a*{typeIR_arg_a <- typeIR_arg_a*} > _externMethodTypeDefEnv = typeIR as externObjectTypeIR
+    -- if typeIR' <: externObjectTypeIR
+    -- let extern typeId' < typeIR_arg_b*{typeIR_arg_b <- typeIR_arg_b*} > _externMethodTypeDefEnv' = typeIR' as externObjectTypeIR
+    -- if (typeId = typeId')
+
+   paths
+
+    rulepath externObjectType
+    -- (if Cast_impl: typeIR_arg_a -> typeIR_arg_b holds)*{typeIR_arg_a <- typeIR_arg_a*, typeIR_arg_b <- typeIR_arg_b*}
+    -- the relation holds
+
 relation Expr_ok: cursor typingContext |- expression : typedExpressionIR
 
   rulegroup literalExpression
@@ -20659,6 +20677,116 @@ relation Expr_inst: cursor instContext store |- typedExpressionIR : store value
     -- Expr_inst: p IC STO_1 |- typedExpressionIR_false : STO_2 value_false
     -- output: % % % |- % : STO_2 value_false
 
+  rulegroup castExpressionIR-objectRef-extern
+
+   match
+
+    (signature) p IC STO_0 |- ( typeIR ) typedExpressionIR as expressionIR # _expressionNoteIR : % %
+    p IC STO_0 |- expressionIR # _expressionNoteIR : % %
+    -- if expressionIR <: castExpressionIR
+    -- let ( typeIR ) typedExpressionIR = expressionIR as castExpressionIR
+
+   paths
+
+    rulepath castExpressionIR-objectRef-extern
+    -- Expr_inst: p IC STO_0 |- typedExpressionIR : STO_1 value_ref
+    -- let value = value_ref
+    -- if value <: objectReferenceValue
+    -- let ref objectId = value as objectReferenceValue
+    -- if typeIR <: externObjectTypeIR
+    -- let object = $find_store(STO_1, objectId)
+    -- if object <: externObject
+    -- let extern _typeId < _theta >{ _objectState _frame _externMethodDefEnv } = object as externObject
+    -- output: % % % |- % : STO_1 value_ref
+
+  rulegroup castExpressionIR-objectRef-parser
+
+   match
+
+    (signature) p IC STO_0 |- ( typeIR ) typedExpressionIR as expressionIR # _expressionNoteIR : % %
+    p IC STO_0 |- expressionIR # _expressionNoteIR : % %
+    -- if expressionIR <: castExpressionIR
+    -- let ( typeIR ) typedExpressionIR = expressionIR as castExpressionIR
+
+   paths
+
+    rulepath castExpressionIR-objectRef-parser
+    -- Expr_inst: p IC STO_0 |- typedExpressionIR : STO_1 value_ref
+    -- let value = value_ref
+    -- if value <: objectReferenceValue
+    -- let ref objectId = value as objectReferenceValue
+    -- if typeIR <: parserObjectTypeIR
+    -- let object = $find_store(STO_1, objectId)
+    -- if object <: parserObject
+    -- let parser< _theta >( _parameterListIR ){ _frame _parserLocalDeclarationListIR _stateEnv } = object as parserObject
+    -- output: % % % |- % : STO_1 value_ref
+
+  rulegroup castExpressionIR-objectRef-control
+
+   match
+
+    (signature) p IC STO_0 |- ( typeIR ) typedExpressionIR as expressionIR # _expressionNoteIR : % %
+    p IC STO_0 |- expressionIR # _expressionNoteIR : % %
+    -- if expressionIR <: castExpressionIR
+    -- let ( typeIR ) typedExpressionIR = expressionIR as castExpressionIR
+
+   paths
+
+    rulepath castExpressionIR-objectRef-control
+    -- Expr_inst: p IC STO_0 |- typedExpressionIR : STO_1 value_ref
+    -- let value = value_ref
+    -- if value <: objectReferenceValue
+    -- let ref objectId = value as objectReferenceValue
+    -- if typeIR <: controlObjectTypeIR
+    -- let object = $find_store(STO_1, objectId)
+    -- if object <: controlObject
+    -- let control< _theta >( _parameterListIR ){ _frame _controlLocalDeclarationListIR _actionDefEnv _controlBodyIR } = object as controlObject
+    -- output: % % % |- % : STO_1 value_ref
+
+  rulegroup castExpressionIR-objectRef-package
+
+   match
+
+    (signature) p IC STO_0 |- ( typeIR ) typedExpressionIR as expressionIR # _expressionNoteIR : % %
+    p IC STO_0 |- expressionIR # _expressionNoteIR : % %
+    -- if expressionIR <: castExpressionIR
+    -- let ( typeIR ) typedExpressionIR = expressionIR as castExpressionIR
+
+   paths
+
+    rulepath castExpressionIR-objectRef-package
+    -- Expr_inst: p IC STO_0 |- typedExpressionIR : STO_1 value_ref
+    -- let value = value_ref
+    -- if value <: objectReferenceValue
+    -- let ref objectId = value as objectReferenceValue
+    -- if typeIR <: packageObjectTypeIR
+    -- let object = $find_store(STO_1, objectId)
+    -- if object <: packageObject
+    -- let package< _theta >{ _frame } = object as packageObject
+    -- output: % % % |- % : STO_1 value_ref
+
+  rulegroup castExpressionIR-objectRef-table
+
+   match
+
+    (signature) p IC STO_0 |- ( typeIR ) typedExpressionIR as expressionIR # _expressionNoteIR : % %
+    p IC STO_0 |- expressionIR # _expressionNoteIR : % %
+    -- if expressionIR <: castExpressionIR
+    -- let ( typeIR ) typedExpressionIR = expressionIR as castExpressionIR
+
+   paths
+
+    rulepath castExpressionIR-objectRef-table
+    -- Expr_inst: p IC STO_0 |- typedExpressionIR : STO_1 value_ref
+    -- let value = value_ref
+    -- if value <: objectReferenceValue
+    -- let ref objectId = value as objectReferenceValue
+    -- if typeIR <: tableObjectTypeIR
+    -- let object = $find_store(STO_1, objectId)
+    -- if object <: tableObject
+    -- let table _typeId { _frame _tableObjectProperty } = object as tableObject
+    -- output: % % % |- % : STO_1 value_ref
+
   rulegroup castExpressionIR
 
    match
@@ -20900,6 +21028,25 @@ relation Expr_inst: cursor instContext store |- typedExpressionIR : store value
     -- Expr_inst: p IC STO_1 |- typedExpressionIR_hi : STO_2 value_hi
     -- Expr_inst: p IC STO_2 |- typedExpressionIR_lo : STO_3 value_lo
     -- output: % % % |- % : STO_3 $bitacc_op(value_base, value_hi, value_lo)
+
+  rulegroup callExpressionIR-constructor-no-type
+
+   match
+
+    (signature) p IC STO_0 |- prefixedNameIR as constructorTargetIR ( argumentListIR ) as expressionIR # expressionNoteIR : % %
+    p IC STO_0 |- expressionIR # expressionNoteIR : % %
+    -- if expressionIR <: callExpressionIR
+    -- let callExpressionIR = expressionIR as callExpressionIR
+    -- if callExpressionIR matches `%(%)`
+    -- let constructorTargetIR ( argumentListIR ) = callExpressionIR
+    -- if constructorTargetIR <: prefixedNameIR
+    -- let prefixedNameIR = constructorTargetIR as prefixedNameIR
+
+   paths
+
+    rulepath callExpressionIR-constructor-no-type
+    -- Expr_inst: p IC STO_0 |- prefixedNameIR < [] > ( argumentListIR ) as expressionIR # expressionNoteIR : STO_2 value_ref
+    -- output: % % % |- % : STO_2 value_ref
 
   rulegroup callExpressionIR-constructor
 
