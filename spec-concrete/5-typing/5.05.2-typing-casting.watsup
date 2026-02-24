@@ -410,6 +410,13 @@ rulegroup Cast_impl_neq/recordTypeIR-default {
 
 }
 
+rulegroup Cast_impl_neq/others {
+
+  rule Cast_impl_neq/externObjectType:
+    (EXTERN typeId `< typeIR_arg_a* > _) -> (EXTERN typeId `< typeIR_arg_b* > _)
+    -- (Cast_impl: typeIR_arg_a -> typeIR_arg_b)*
+}
+
 ;;
 ;; Serializable enum reduction
 ;;
