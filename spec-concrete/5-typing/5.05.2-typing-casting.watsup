@@ -415,6 +415,13 @@ rulegroup Cast_impl_neq/others {
   rule Cast_impl_neq/externObjectType:
     (EXTERN typeId `< typeIR_arg_a* > _) -> (EXTERN typeId `< typeIR_arg_b* > _)
     -- (Cast_impl: typeIR_arg_a -> typeIR_arg_b)*
+
+  rule Cast_impl_neq/parserObjectType:
+     (PARSER typeId_a `< typeArgumentIR_a* > `( parameterIR_a* )) -> (PARSER typeId_b `< typeArgumentIR_b* > `( parameterIR_b* ))
+     -- if (_ direction_a typeIR_a _ _ = parameterIR_a)*
+     -- if (_ direction_b typeIR_b _ _ = parameterIR_b)*
+     -- if (direction_a = direction_b)*
+     -- (Cast_impl: typeIR_a -> typeIR_b)*
 }
 
 ;;

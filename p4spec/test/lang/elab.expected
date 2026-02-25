@@ -12036,18 +12036,33 @@ relation Cast_impl_neq: typeIR -> typeIR
 
    match
 
-    (signature) extern typeId < typeIR_arg_a*{typeIR_arg_a <- typeIR_arg_a*} > _externMethodTypeDefEnv as typeIR -> extern typeId < typeIR_arg_b*{typeIR_arg_b <- typeIR_arg_b*} > _externMethodTypeDefEnv' as typeIR
+    (signature) typeIR -> typeIR'
     typeIR -> typeIR'
-    -- if typeIR <: externObjectTypeIR
-    -- let extern typeId < typeIR_arg_a*{typeIR_arg_a <- typeIR_arg_a*} > _externMethodTypeDefEnv = typeIR as externObjectTypeIR
-    -- if typeIR' <: externObjectTypeIR
-    -- let extern typeId' < typeIR_arg_b*{typeIR_arg_b <- typeIR_arg_b*} > _externMethodTypeDefEnv' = typeIR' as externObjectTypeIR
-    -- if (typeId = typeId')
 
    paths
 
     rulepath externObjectType
+    -- let typeIR'' = typeIR
+    -- if typeIR'' <: externObjectTypeIR
+    -- let extern typeId < typeIR_arg_a*{typeIR_arg_a <- typeIR_arg_a*} > _externMethodTypeDefEnv = typeIR'' as externObjectTypeIR
+    -- let typeIR''' = typeIR'
+    -- if typeIR''' <: externObjectTypeIR
+    -- let extern typeId' < typeIR_arg_b*{typeIR_arg_b <- typeIR_arg_b*} > _externMethodTypeDefEnv' = typeIR''' as externObjectTypeIR
+    -- if (typeId' = typeId)
     -- (if Cast_impl: typeIR_arg_a -> typeIR_arg_b holds)*{typeIR_arg_a <- typeIR_arg_a*, typeIR_arg_b <- typeIR_arg_b*}
+    -- the relation holds
+
+    rulepath parserObjectType
+    -- let typeIR'' = typeIR
+    -- if typeIR'' <: parserObjectTypeIR
+    -- let parser typeId_a < typeArgumentIR_a*{typeArgumentIR_a <- typeArgumentIR_a*} >( parameterIR_a*{parameterIR_a <- parameterIR_a*} ) = typeIR'' as parserObjectTypeIR
+    -- let typeIR''' = typeIR'
+    -- if typeIR''' <: parserObjectTypeIR
+    -- let parser typeId_b < typeArgumentIR_b*{typeArgumentIR_b <- typeArgumentIR_b*} >( parameterIR_b*{parameterIR_b <- parameterIR_b*} ) = typeIR''' as parserObjectTypeIR
+    -- (let _annotationList direction_a typeIR_a _id _parameterInitializerOptIR = parameterIR_a)*{parameterIR_a <- parameterIR_a*, _annotationList -> _annotationList*, _id -> _id*, _parameterInitializerOptIR -> _parameterInitializerOptIR*, direction_a -> direction_a*, typeIR_a -> typeIR_a*}
+    -- (let _annotationList' direction_b typeIR_b _id' _parameterInitializerOptIR' = parameterIR_b)*{parameterIR_b <- parameterIR_b*, _annotationList' -> _annotationList'*, _id' -> _id'*, _parameterInitializerOptIR' -> _parameterInitializerOptIR'*, direction_b -> direction_b*, typeIR_b -> typeIR_b*}
+    -- (if (direction_a = direction_b))*{direction_a <- direction_a*, direction_b <- direction_b*}
+    -- (if Cast_impl: typeIR_a -> typeIR_b holds)*{typeIR_a <- typeIR_a*, typeIR_b <- typeIR_b*}
     -- the relation holds
 
 relation Expr_ok: cursor typingContext |- expression : typedExpressionIR
